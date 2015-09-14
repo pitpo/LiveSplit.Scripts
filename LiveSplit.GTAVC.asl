@@ -279,7 +279,7 @@ update
 		if (vars.gameState.Old == 8 && vars.gameState.Current == 9) {vars.doStart = true;}
 		
 		// Resetting the splits if needed.
-		if (vars.gameState.Old == 7 && vars.gameState.Current == 8) {vars.doReset = true;}
+		if (vars.gameState.Old == 9 && vars.gameState.Current == 8) {vars.doReset = true;}
 	}
 	
 	// All missions (besides the final split).
