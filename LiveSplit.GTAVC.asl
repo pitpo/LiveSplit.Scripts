@@ -8,7 +8,10 @@ state("gta-vc")
 state("gta-vc", "1.0") {}
 state("gta-vc", "1.1") {}
 state("gta-vc", "steam") {}
-state("gta-vc", "jp") {}
+state("gta-vc", "jp") {
+	byte phonePickup1 : 0x3DF3F0;
+	byte phonePickup2 : 0x3DF3F4;
+}
 
 init
 {
@@ -38,7 +41,6 @@ init
 		if (vars.category.Contains("any") || vars.category.Contains("beat the game"))
 		{
 			vars.missionAddresses.Add(0x421600);  // The Party
-			//vars.missionAddresses.Add(0x4233AC);  // Sprint tutorial after phone pickup shown (closest thing to phone pickup that doesn't involve local variables)
 			vars.missionAddresses.Add(0x421604);  // Back Alley Brawl
 			vars.missionAddresses.Add(0x421608);  // Jury Fury
 			vars.missionAddresses.Add(0x42160C);  // Riot
@@ -307,6 +309,18 @@ update
 		
 		// Resetting the splits if needed.
 		if (vars.gameState.Old == 9 && vars.gameState.Current == 8 && currentRealTimeInSeconds > 19) {vars.doReset = true;}
+	}
+	
+	// Split on phone pickup (actually on pickup creation) [currently only on jp]
+	// If Back Alley Brawl is in the mission addresses list, autosplitter will split after the mission
+	if (currentRealTimeInSeconds > 0 && version == "jp") 
+	{
+		var currentSplit = timer.CurrentSplit.Name.ToLower();
+		if ((currentSplit.Contains("chef") || currentSplit.Contains("phone")) && (int)current.phonePickup1 != 0 && 
+			(int)current.phonePickup2 != 0 && vars.missionAddressesCurrent[0] != 0x421604) 
+		{
+			vars.doSplit = true;
+		}
 	}
 	
 	// All missions (besides the final split).
